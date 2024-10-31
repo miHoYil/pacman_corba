@@ -1,0 +1,67 @@
+module PacmanServer {
+
+    struct GameMap {
+        long width;
+        long height;
+        string map_text;
+    };
+
+    struct Vec2 {
+        float x;
+        float y;
+    };
+
+    enum Movement {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    };
+
+    struct PlayerData
+    {
+        long player_id;
+        Vec2 position;
+        string name;
+        long score;
+        long life;
+        // idle, dead, up, down, left, right
+        string status;
+        boolean immune;
+    };
+
+    struct GhostData {
+        Movement direction;
+        Vec2 position;
+    };
+
+    struct BerryData {
+        Vec2 position;
+        boolean is_power_up;
+    };
+
+    struct GameState {
+        long server_id;
+        long level_number;
+        boolean is_active;
+        long number_of_players;
+        sequence<PlayerData> players;
+        long number_of_ghosts;
+        sequence<GhostData> ghosts;
+        long number_of_berries;
+        sequence<BerryData> berries;
+    };
+
+    interface GameService {
+        // returns player ID in server
+        long connect_to_server(in long version, in string name);
+        void disconnect_from_server(in long version, in long player_id);
+
+        GameMap get_start_map(in long version, in long level_number);
+        void update_player_status(in long version, in long player_id, in string status);
+        GameState get_game_state(in long version, in long player_id);
+        PlayerData get_player_state(in long version, in long player_id);
+    };
+
+
+};
