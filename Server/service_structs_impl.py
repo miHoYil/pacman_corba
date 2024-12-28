@@ -30,7 +30,7 @@ class PlayerDataImpl(PacmanServer.PlayerData):
         self.directions = {'left': Vec2Impl(-self.player_speed,0) ,
                 'right': Vec2Impl(self.player_speed,0),
                 'up': Vec2Impl(0, -self.player_speed),
-                'down':  Vec2Impl(0, self.player_speed),
+                    'down':  Vec2Impl(0, self.player_speed),
                 'idle':  Vec2Impl(0, 0)}
 
 

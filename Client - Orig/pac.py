@@ -62,9 +62,6 @@ class Pac(pygame.sprite.Sprite):
 
 	# update with sprite/sheets
 	def animate(self):
-		if(self.immune):
-			self.status = 'power_up'
-		
 		animation = self.animations[self.status]
 
 		# loop over frame index

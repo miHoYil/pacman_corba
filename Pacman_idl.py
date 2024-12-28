@@ -65,21 +65,33 @@ _0_PacmanServer._d_Movement  = (omniORB.tcInternal.tv_enum, _0_PacmanServer.Move
 _0_PacmanServer._tc_Movement = omniORB.tcInternal.createTypeCode(_0_PacmanServer._d_Movement)
 omniORB.registerType(_0_PacmanServer.Movement._NP_RepositoryId, _0_PacmanServer._d_Movement, _0_PacmanServer._tc_Movement)
 
+# enum GhostType
+_0_PacmanServer.ORANGE = omniORB.EnumItem("ORANGE", 0)
+_0_PacmanServer.BLUE = omniORB.EnumItem("BLUE", 1)
+_0_PacmanServer.PINK = omniORB.EnumItem("PINK", 2)
+_0_PacmanServer.RED = omniORB.EnumItem("RED", 3)
+_0_PacmanServer.GhostType = omniORB.Enum("IDL:PacmanServer/GhostType:1.0", (_0_PacmanServer.ORANGE, _0_PacmanServer.BLUE, _0_PacmanServer.PINK, _0_PacmanServer.RED,))
+
+_0_PacmanServer._d_GhostType  = (omniORB.tcInternal.tv_enum, _0_PacmanServer.GhostType._NP_RepositoryId, "GhostType", _0_PacmanServer.GhostType._items)
+_0_PacmanServer._tc_GhostType = omniORB.tcInternal.createTypeCode(_0_PacmanServer._d_GhostType)
+omniORB.registerType(_0_PacmanServer.GhostType._NP_RepositoryId, _0_PacmanServer._d_GhostType, _0_PacmanServer._tc_GhostType)
+
 # struct PlayerData
 _0_PacmanServer.PlayerData = omniORB.newEmptyClass()
 class PlayerData (omniORB.StructBase):
     _NP_RepositoryId = "IDL:PacmanServer/PlayerData:1.0"
 
-    def __init__(self, player_id, position, name, score, life, status):
+    def __init__(self, player_id, position, name, score, life, status, immune):
         self.player_id = player_id
         self.position = position
         self.name = name
         self.score = score
         self.life = life
         self.status = status
+        self.immune = immune
 
 _0_PacmanServer.PlayerData = PlayerData
-_0_PacmanServer._d_PlayerData  = (omniORB.tcInternal.tv_struct, PlayerData, PlayerData._NP_RepositoryId, "PlayerData", "player_id", omniORB.tcInternal.tv_long, "position", omniORB.typeMapping["IDL:PacmanServer/Vec2:1.0"], "name", (omniORB.tcInternal.tv_string,0), "score", omniORB.tcInternal.tv_long, "life", omniORB.tcInternal.tv_long, "status", (omniORB.tcInternal.tv_string,0))
+_0_PacmanServer._d_PlayerData  = (omniORB.tcInternal.tv_struct, PlayerData, PlayerData._NP_RepositoryId, "PlayerData", "player_id", omniORB.tcInternal.tv_long, "position", omniORB.typeMapping["IDL:PacmanServer/Vec2:1.0"], "name", (omniORB.tcInternal.tv_string,0), "score", omniORB.tcInternal.tv_long, "life", omniORB.tcInternal.tv_long, "status", (omniORB.tcInternal.tv_string,0), "immune", omniORB.tcInternal.tv_boolean)
 _0_PacmanServer._tc_PlayerData = omniORB.tcInternal.createTypeCode(_0_PacmanServer._d_PlayerData)
 omniORB.registerType(PlayerData._NP_RepositoryId, _0_PacmanServer._d_PlayerData, _0_PacmanServer._tc_PlayerData)
 del PlayerData
@@ -89,12 +101,13 @@ _0_PacmanServer.GhostData = omniORB.newEmptyClass()
 class GhostData (omniORB.StructBase):
     _NP_RepositoryId = "IDL:PacmanServer/GhostData:1.0"
 
-    def __init__(self, direction, position):
+    def __init__(self, direction, position, type):
         self.direction = direction
         self.position = position
+        self.type = type
 
 _0_PacmanServer.GhostData = GhostData
-_0_PacmanServer._d_GhostData  = (omniORB.tcInternal.tv_struct, GhostData, GhostData._NP_RepositoryId, "GhostData", "direction", omniORB.typeMapping["IDL:PacmanServer/Movement:1.0"], "position", omniORB.typeMapping["IDL:PacmanServer/Vec2:1.0"])
+_0_PacmanServer._d_GhostData  = (omniORB.tcInternal.tv_struct, GhostData, GhostData._NP_RepositoryId, "GhostData", "direction", omniORB.tcInternal.tv_long, "position", omniORB.typeMapping["IDL:PacmanServer/Vec2:1.0"], "type", omniORB.tcInternal.tv_long)
 _0_PacmanServer._tc_GhostData = omniORB.tcInternal.createTypeCode(_0_PacmanServer._d_GhostData)
 omniORB.registerType(GhostData._NP_RepositoryId, _0_PacmanServer._d_GhostData, _0_PacmanServer._tc_GhostData)
 del GhostData
@@ -154,7 +167,6 @@ _0_PacmanServer._tc_GameService = omniORB.tcInternal.createTypeCode(_0_PacmanSer
 omniORB.registerType(GameService._NP_RepositoryId, _0_PacmanServer._d_GameService, _0_PacmanServer._tc_GameService)
 
 # GameService operations and attributes
-GameService._d_get_hello = ((omniORB.tcInternal.tv_long, omniORB.tcInternal.tv_long, (omniORB.tcInternal.tv_string,0)), (omniORB.typeMapping["IDL:PacmanServer/PlayerData:1.0"], ), None)
 GameService._d_connect_to_server = ((omniORB.tcInternal.tv_long, (omniORB.tcInternal.tv_string,0)), (omniORB.tcInternal.tv_long, ), None)
 GameService._d_disconnect_from_server = ((omniORB.tcInternal.tv_long, omniORB.tcInternal.tv_long), (), None)
 GameService._d_get_start_map = ((omniORB.tcInternal.tv_long, omniORB.tcInternal.tv_long), (omniORB.typeMapping["IDL:PacmanServer/GameMap:1.0"], ), None)
@@ -168,9 +180,6 @@ class _objref_GameService (CORBA.Object):
 
     def __init__(self, obj):
         CORBA.Object.__init__(self, obj)
-
-    def get_hello(self, *args):
-        return self._obj.invoke("get_hello", _0_PacmanServer.GameService._d_get_hello, args)
 
     def connect_to_server(self, *args):
         return self._obj.invoke("connect_to_server", _0_PacmanServer.GameService._d_connect_to_server, args)
@@ -200,7 +209,7 @@ class GameService (PortableServer.Servant):
     _NP_RepositoryId = _0_PacmanServer.GameService._NP_RepositoryId
 
 
-    _omni_op_d = {"get_hello": _0_PacmanServer.GameService._d_get_hello, "connect_to_server": _0_PacmanServer.GameService._d_connect_to_server, "disconnect_from_server": _0_PacmanServer.GameService._d_disconnect_from_server, "get_start_map": _0_PacmanServer.GameService._d_get_start_map, "update_player_status": _0_PacmanServer.GameService._d_update_player_status, "get_game_state": _0_PacmanServer.GameService._d_get_game_state, "get_player_state": _0_PacmanServer.GameService._d_get_player_state}
+    _omni_op_d = {"connect_to_server": _0_PacmanServer.GameService._d_connect_to_server, "disconnect_from_server": _0_PacmanServer.GameService._d_disconnect_from_server, "get_start_map": _0_PacmanServer.GameService._d_get_start_map, "update_player_status": _0_PacmanServer.GameService._d_update_player_status, "get_game_state": _0_PacmanServer.GameService._d_get_game_state, "get_player_state": _0_PacmanServer.GameService._d_get_player_state}
 
 GameService._omni_skeleton = GameService
 _0_PacmanServer__POA.GameService = GameService

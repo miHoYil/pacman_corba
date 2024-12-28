@@ -7,8 +7,6 @@ from cell import Cell
 from berry import Berry
 # from ghost import Ghost
 from display import Display
-from ghost import Ghost
-from ghost import get_ghost_type
 
 class World:
 	def __init__(self, screen, game_map, player_idx):
@@ -16,7 +14,7 @@ class World:
 
 		self.player_idx = player_idx
 		self.players = {} #pygame.sprite.Group()
-		self.ghosts = {} #pygame.sprite.Group()
+		self.ghosts = pygame.sprite.Group()
 		self.walls = pygame.sprite.Group()
 		self.berries = pygame.sprite.Group()
 
@@ -27,7 +25,6 @@ class World:
 
 		self.game_over = False
 		self.reset_pos = False
-		self.is_spectate = False
 		self.player_score = 0
 		self.game_level = 1
 
@@ -47,6 +44,18 @@ class World:
 				elif char == "B":	# for big berries
 					self.berries.add(Berry(x_index, y_index, CHAR_SIZE // 2, is_power_up=True))
 
+				# # for Ghosts's starting position
+				# elif char == "s":
+				# 	# self.ghosts.add(Ghost(x_index, y_index, "skyblue"))
+				# elif char == "p":
+				# 	# self.ghosts.add(Ghost(x_index, y_index, "pink"))
+				# elif char == "o":
+				# 	# self.ghosts.add(Ghost(x_index, y_index, "orange"))
+				# elif char == "r":
+				# 	# self.ghosts.add(Ghost(x_index, y_index, "red"))
+				#
+				# elif char == "P":	# for PacMan's starting position
+				# 	# self.player.add(Pac(x_index, y_index))
 
 	# displays nav
 	def _dashboard(self):
@@ -82,15 +91,9 @@ class World:
 		self.game_level = game_state.level_number
 		self.game_over =  not game_state.is_active
 
-		scores = []
 		updated_players = []
 		#self.players.empty()
 		for player in game_state.players:
-			if player.player_id == self.player_idx & player.life <= 0:
-				self.is_spectate = True
-
-			scores.append({"name": player.name, "score": player.score})
-
 			if player.player_id in self.players:
 				self.players[player.player_id].update_data(player.position.x, player.position.y,
 															player.status, player.life, player.score,
@@ -101,19 +104,6 @@ class World:
 			updated_players.append(player.player_id)
 
 		self.players = {key: value for key, value in self.players.items() if key in updated_players}
-
-		updated_ghost = []
-		# self.players.empty()
-		for ghost in game_state.ghosts:
-			if ghost.type in self.ghosts:
-				self.ghosts[ghost.type].update_data(ghost.position.x, ghost.position.y,
-														   ghost.direction)
-			else:
-				self.ghosts[ghost.type] = Ghost(player.position.x, player.position.y, ghost.type,ghost.direction)
-			updated_ghost.append(ghost.type)
-
-		self.ghosts = {key: value for key, value in self.ghosts.items() if key in updated_ghost}
-
 
 		# for player in self.players:
 		# 	if player not in updated_players:
@@ -131,32 +121,15 @@ class World:
 		[berry.update(self.screen) for berry in self.berries.sprites()]
 
 		for player in self.players.values():
-			if player.life > 0:
-				player.animate()
-				player.update(self.screen)
-
-		for ghost in self.ghosts.values():
-			ghost.animate()
-			ghost.update(self.screen)
+			player.animate()
+			player.update(self.screen)
 
 		# [player.animate() for player in self.players.sprites()]
 		# [player.update(self.screen) for player in self.players.sprites()]
 		# [ghost.update(self.walls_collide_list) for ghost in self.ghosts.sprites()]
 		# self.ghosts.draw(self.screen)
 
-		# TODO: add text on screen about death
-		if self.is_spectate:
-			self.is_spectate = True
-
-
-		# TODO: add score table to game_over
-		if self.game_over:
-			if len(self.berries) == 0:
-				self.display.game_finished(scores)
-				self.display.draw_score_table(scores)
-			else:
-				self.display.game_over()
-				self.display.draw_score_table(scores)
+		self.display.game_over() if self.game_over else None
 
 		self._dashboard()
 

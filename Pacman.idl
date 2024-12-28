@@ -18,6 +18,14 @@ module PacmanServer {
         RIGHT
     };
 
+    enum GhostType 
+    {
+        ORANGE,
+        BLUE,
+        PINK,
+        RED
+    };
+
     struct PlayerData
     {
         long player_id;
@@ -31,8 +39,9 @@ module PacmanServer {
     };
 
     struct GhostData {
-        Movement direction;
+        long direction;
         Vec2 position;
+        long type;
     };
 
     struct BerryData {

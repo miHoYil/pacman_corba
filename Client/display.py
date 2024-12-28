@@ -12,6 +12,7 @@ class Display:
 		self.text_color = pygame.Color("crimson")
 		self.width = width * CHAR_SIZE
 		self.height = height * CHAR_SIZE
+		self.table_font = pygame.font.Font(None, CHAR_SIZE)
 				
 	def show_life(self, life):
 		img_path = "assets/life/life.png"
@@ -37,6 +38,30 @@ class Display:
 	# add game over message
 	def game_over(self):
 		message = self.game_over_font.render(f'GAME OVER!!', True, pygame.Color("chartreuse"))
-		instruction = self.font.render(f'Press "R" to Restart', True, pygame.Color("aqua"))
 		self.screen.blit(message, ((self.width // 4), (self.height // 3)))
-		self.screen.blit(instruction, ((self.width // 4), (self.height // 2)))
+
+	def game_finished(self, scores):
+		max_score_entry = max(scores, key=lambda x: x["score"])
+		message = self.game_over_font.render(f'PLAYER {max_score_entry['name']} WINS!!', True, pygame.Color("chartreuse"))
+		self.screen.blit(message, ((self.width // 4), (self.height // 3)))
+
+	# Function to draw the score table
+	def draw_score_table(self, scores):
+		# Draw the table header
+		header_surface = self.table_font.render("Score Table", True, pygame.Color("chartreuse"))
+		self.screen.blit(header_surface, (self.width // 2 - header_surface.get_width() / 2, (self.height // 3 + CHAR_SIZE * 2)))
+
+		# Draw the column headers
+		name_header_surface = self.table_font.render("Name", True, pygame.Color("chartreuse"))
+		score_header_surface = self.table_font.render("Score", True, pygame.Color("chartreuse"))
+		self.screen.blit(name_header_surface, ((self.width // 4), (self.height // 3 + CHAR_SIZE * 3)))
+		self.screen.blit(score_header_surface, ((self.width // 2), (self.height // 3 + CHAR_SIZE * 3)))
+
+		scores.sort(key=lambda x: x["score"], reverse=True)
+
+		# Draw the scores
+		for index, entry in enumerate(scores):
+			name_surface = self.table_font.render(entry["name"], True, pygame.Color("chartreuse"))
+			score_surface = self.table_font.render(str(entry["score"]), True, pygame.Color("chartreuse"))
+			self.screen.blit(name_surface, ((self.width // 4), self.height // 3 + (index + 4) * CHAR_SIZE))
+			self.screen.blit(score_surface, ((self.width // 2), self.height // 3 + (index + 4) * CHAR_SIZE))

@@ -33,50 +33,18 @@ def main():
     # Narrow the object to an PacmanServer::GameService
     game_service = obj._narrow(PacmanServer.GameService)
 
-    pygame.init()
-    screen = pygame.display.set_mode((CHAR_SIZE * 8, CHAR_SIZE * 5))
-    font = pygame.font.Font(None, CHAR_SIZE)
-    pygame.display.set_caption('Input Name')
-    msg_surface = font.render('Input Name: ', True, (0, 0, 0))
-
-    # Initialize variables
-    input_string = ''
-    input_active = True
-    clock = pygame.time.Clock()
-
-    while input_active:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            # Handle key events
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:  # Press Enter to submit
-                    print("User input:", input_string)
-                    input_active = False
-                elif event.key == pygame.K_BACKSPACE:  # Handle backspace
-                    input_string = input_string[:-1]
-                else:
-                    input_string += event.unicode  # Add the character to the input string
-
-        # Fill the screen with a color
-        screen.fill((255, 255, 255))
-        # Render the input string
-        text_surface = font.render(input_string, True, (0, 0, 0))
-        screen.blit(msg_surface, (CHAR_SIZE, CHAR_SIZE * 2))
-        screen.blit(text_surface, (CHAR_SIZE * 3, CHAR_SIZE * 3))
-        # Update the display
-        pygame.display.flip()
-        clock.tick(30)
-
     # Play the game
-    player_idx =  game_service.connect_to_server(2, input_string)
+    # try:
+    player_idx =  game_service.connect_to_server(1, "Player's name" + str(random()))
     print(f"Result: {player_idx}")
+    # finally:
+    #     print("Server is not active")
+    #     exit(0)
 
     game_map = game_service.get_start_map(1, 0)
-    screen = pygame.display.set_mode((game_map.width * CHAR_SIZE, game_map.height * CHAR_SIZE + NAV_HEIGHT))
 
+    pygame.init()
+    screen = pygame.display.set_mode((game_map.width * CHAR_SIZE, game_map.height * CHAR_SIZE + NAV_HEIGHT))
     pygame.display.set_caption("PacMan")
     keys = {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'up': pygame.K_UP, 'down': pygame.K_DOWN}
 
